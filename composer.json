@@ -1,0 +1,21 @@
+{
+    "require": {
+        "psr/http-message": "^1.0"
+    },
+    "require-dev": {
+        "mindplay/testies": "dev-master",
+        "zendframework/zend-diactoros": "^1.1",
+        "relay/relay": "1.*@dev",
+        "cebe/markdown": "^1.1",
+        "kzykhys/yaml-front-matter": "^1.0"
+    },
+    "suggest": {
+        "cebe/markdown": "The officially supported Markdown renderer",
+        "kzykhys/yaml-front-matter": "The officially supported Front Matter parser"
+    },
+    "autoload": {
+        "psr-4": {
+            "mindplay\\middlemark\\": "src/"
+        }
+    }
+}
