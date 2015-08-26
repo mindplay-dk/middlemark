@@ -6,7 +6,6 @@ use cebe\markdown\GithubMarkdown;
 use KzykHys\FrontMatter\FrontMatter;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Zend\Diactoros\Stream;
 
 class MarkdownMiddleware
 {
@@ -39,6 +38,7 @@ class MarkdownMiddleware
         MarkdownInterface $markdown = null,
         FrontMatterInterface $frontmatter = null
     ) {
+        $this->root_path = $root_path;
         $this->markdown = $markdown ?: new CebeMarkdown(new GithubMarkdown());
         $this->frontmatter = $frontmatter ?: new YamlFrontMatter(new FrontMatter());
     }
@@ -56,26 +56,32 @@ class MarkdownMiddleware
             return null; // URI mask doesn't match
         }
 
-        $pattern = '/^(.*)\.(\w+)$/';
+        $pattern = '/^(.*\.)([a-zA-Z]+)$/';
 
-        $path = $this->root_path . DIRECTORY_SEPARATOR . preg_replace($pattern, "md", $uri);
+        $path = $this->root_path . preg_replace($pattern, '$1md', $uri);
 
         if (!file_exists($path)) {
             return null; // file not found
         }
 
-        return null;
+        return $path;
     }
 
     public function __invoke(Request $request, Response $response, callable $next)
     {
         $path = $this->getPath($request);
 
-        if ($path) {
+        if ($path === null) {
             return $next($request, $response);
         }
 
-        $response->getBody()->write($this->markdown->render(file_get_contents($path)));
+        $doc = $this->frontmatter->parse(file_get_contents($path));
+
+        $html = $this->markdown->render($doc->markdown);
+
+        // TODO render layout
+
+        $response->getBody()->write($html);
 
         return $response
             ->withStatus(200)
