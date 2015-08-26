@@ -80,6 +80,8 @@ class MarkdownMiddleware
         $html = $this->markdown->render($doc->markdown);
 
         // TODO render layout
+        // TODO build out default layout view-model
+        // http://jekyllrb.com/docs/frontmatter/
 
         $response->getBody()->write($html);
 
