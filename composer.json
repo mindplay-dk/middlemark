@@ -1,4 +1,14 @@
 {
+    "name": "mindplay/middlemark",
+    "type": "library",
+    "description": "Markdown renderer as PSR-7 middleware",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Rasmus Schultz",
+            "email": "rasmus@mindplay.dk"
+        }
+    ],
     "require": {
         "psr/http-message": "^1.0"
     },
