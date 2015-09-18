@@ -5,9 +5,9 @@ namespace mindplay\middlemark;
 interface RendererInterface
 {
     /**
-     * @param Document $doc
+     * @param View $view
      *
      * @return string rendered HTML
      */
-    public function render(Document $doc);
+    public function render(View $view);
 }

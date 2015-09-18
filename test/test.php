@@ -6,6 +6,7 @@ use mindplay\middlemark\CebeMarkdownEngine;
 use mindplay\middlemark\CiconiaMarkdownEngine;
 use mindplay\middlemark\MarkdownMiddleware;
 use mindplay\middlemark\Rewriter;
+use mindplay\middlemark\View;
 use mindplay\middlemark\ViewRenderer;
 use mindplay\middlemark\YamlFrontMatterParser;
 use Zend\Diactoros\Request;
@@ -126,14 +127,17 @@ test(
     function () {
         $parser = new YamlFrontMatterParser();
 
-        $doc = $parser->parse("---\ntitle: Hello World\n---\n# Hello");
-
         $finder = new SimpleViewFinder(__DIR__ . '/tpl', 'mindplay\\middlemark');
         $service = new ViewService($finder);
-        $engine = new CiconiaMarkdownEngine();
-        $renderer = new ViewRenderer($service, $engine);
+        $renderer = new ViewRenderer($service);
+        $engine = new CebeMarkdownEngine();
 
-        $html = $renderer->render($doc);
+        $view = new View();
+        $view->doc = $parser->parse("---\ntitle: Hello World\n---\n# Hello");
+        $view->body = $engine->render($view->doc->getContent());
+        $view->title = $view->doc->getTitle();
+
+        $html = $renderer->render($view);
 
         ok(strpos($html, "<h1>Hello</h1>") !== false, "contains rendered content");
         ok(strpos($html, "<title>Hello World</title>") !== false, "contains title from meta-data");

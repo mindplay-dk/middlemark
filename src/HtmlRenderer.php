@@ -4,32 +4,16 @@ namespace mindplay\middlemark;
 
 /**
  * Naive renderer with no layout, just adds an HTML5 document envelope.
+ *
+ * Mostly proof of concept, see {@ViewRenderer} for a more useful renderer.
  */
 class HtmlRenderer implements RendererInterface
 {
-    /**
-     * @var MarkdownEngineInterface
-     */
-    private $engine;
-
-    public function __construct(MarkdownEngineInterface $engine = null)
+    public function render(View $view)
     {
-        $this->engine = $engine ?: $this->createDefaultEngine();
-    }
-
-    public function render(Document $doc)
-    {
-        $title = htmlspecialchars($doc->getTitle() ?: "No Title");
-        $body = $this->engine->render($doc->getContent());
+        $title = htmlspecialchars($view->title);
+        $body = $view->body;
 
         return "<!DOCTYPE html><html><head><title>{$title}</title></head><body>{$body}</body></html>";
-    }
-
-    /**
-     * @return CebeMarkdownEngine
-     */
-    protected function createDefaultEngine()
-    {
-        return new CebeMarkdownEngine();
     }
 }

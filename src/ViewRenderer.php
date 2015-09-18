@@ -12,55 +12,27 @@ use mindplay\kisstpl\Renderer;
 class ViewRenderer implements RendererInterface
 {
     /**
-     * @var RendererInterface
-     */
-    protected $engine;
-
-    /**
      * @var Renderer
      */
     protected $service;
 
     /**
-     * @param Renderer                $service the view-service (pre-configured with a Finder for the Document model)
-     * @param MarkdownEngineInterface $engine  the Markdown rendering engine to use
+     * @param Renderer $service the view-service (pre-configured with a Finder for the Document model)
      */
-    public function __construct(Renderer $service, MarkdownEngineInterface $engine)
+    public function __construct(Renderer $service)
     {
-        $this->engine = $engine;
         $this->service = $service;
     }
 
     /**
-     * @param Document $doc
+     * @param View $view
      *
      * @return string
      */
-    public function render(Document $doc)
+    public function render(View $view)
     {
-        $body = $this->engine->render($doc->getContent());
-
-        $view = $this->createView($doc, $body);
-
-        $layout = $doc->getLayout() ?: 'default';
+        $layout = $view->doc->getLayout() ?: 'default';
 
         return $this->service->capture($view, $layout);
-    }
-
-    /**
-     * @param Document $doc
-     * @param string   $body HTML body content
-     *
-     * @return View
-     */
-    protected function createView(Document $doc, $body)
-    {
-        $view = new View();
-
-        $view->doc = $doc;
-        $view->body = $body;
-        $view->title = $doc->getTitle() ?: "No Title";
-
-        return $view;
     }
 }
