@@ -2,8 +2,6 @@
 
 namespace mindplay\middlemark;
 
-
-
 /**
  * Naive renderer with no layout, just adds an HTML5 document envelope.
  */

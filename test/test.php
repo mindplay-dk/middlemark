@@ -1,12 +1,11 @@
 <?php
 
-
 use mindplay\kisstpl\SimpleViewFinder;
 use mindplay\kisstpl\ViewService;
 use mindplay\middlemark\CebeMarkdownEngine;
 use mindplay\middlemark\CiconiaMarkdownEngine;
-
 use mindplay\middlemark\MarkdownMiddleware;
+use mindplay\middlemark\Rewriter;
 use mindplay\middlemark\ViewRenderer;
 use mindplay\middlemark\YamlFrontMatterParser;
 use Zend\Diactoros\Request;
@@ -78,6 +77,27 @@ test(
         eq($parser->parse("---\ntags: foo\n---\n")->getTags(), array('foo'), "can get single tag");
         eq($parser->parse("---\ntags: foo, bar\n---\n")->getTags(), array('foo','bar'), "can get comma-separated tags");
         eq($parser->parse("---\ntags:\n- foo\n- bar\n---\n")->getTags(), array('foo','bar'), "can get list of tags");
+    }
+);
+
+test(
+    "can rewrite URLs",
+    function () {
+        $rewriter = new Rewriter();
+
+        $rewrite = function ($url) {
+            return "/{$url}/";
+        };
+
+        eq($rewriter->process("<a href=\"foo.md\">Foo</a>", $rewrite), "<a href=\"/foo.md/\">Foo</a>");
+        eq($rewriter->process("<a href='foo.md'>Foo</a>", $rewrite), "<a href='/foo.md/'>Foo</a>");
+        eq($rewriter->process("<a href=foo.md>Foo</a>", $rewrite), "<a href=/foo.md/>Foo</a>");
+
+        eq(
+            $rewriter->process("<a href=\"foo.md\">Foo</a><a href=\"bar.md\">Foo</a>", $rewrite),
+            "<a href=\"/foo.md/\">Foo</a><a href=\"/bar.md/\">Foo</a>",
+            "can rewrite multiple URLs"
+        );
     }
 );
 
