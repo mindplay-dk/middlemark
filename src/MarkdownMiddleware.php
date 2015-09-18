@@ -2,8 +2,7 @@
 
 namespace mindplay\middlemark;
 
-use cebe\markdown\GithubMarkdown;
-use KzykHys\FrontMatter\FrontMatter;
+
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 

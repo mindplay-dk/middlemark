@@ -2,7 +2,7 @@
 
 namespace mindplay\middlemark;
 
-use cebe\markdown\GithubMarkdown;
+
 
 /**
  * Naive renderer with no layout, just adds an HTML5 document envelope.

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "34c7d97b62441712a7ed60bc425ef3c7",
+    "hash": "ecb6cbedc8ca89d69329caf42fdeba70",
     "packages": [
         {
             "name": "psr/http-message",
@@ -213,6 +213,47 @@
                 "yaml"
             ],
             "time": "2013-12-25 05:37:30"
+        },
+        {
+            "name": "mindplay/kisstpl",
+            "version": "1.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mindplay-dk/kisstpl.git",
+                "reference": "e0e3c1aebddcdb960fda7a5afe175ab8eea7a609"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mindplay-dk/kisstpl/zipball/e0e3c1aebddcdb960fda7a5afe175ab8eea7a609",
+                "reference": "e0e3c1aebddcdb960fda7a5afe175ab8eea7a609",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "mindplay/benchpress": "@dev",
+                "mindplay/testies": "dev-master",
+                "phpunit/php-code-coverage": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "mindplay\\kisstpl\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Rasmus Schultz",
+                    "email": "rasmus@mindplay.dk"
+                }
+            ],
+            "description": "View service / template engine for plain PHP templates",
+            "time": "2015-09-03 14:03:17"
         },
         {
             "name": "mindplay/testies",

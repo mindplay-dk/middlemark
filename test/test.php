@@ -1,12 +1,13 @@
 <?php
 
-use cebe\markdown\GithubMarkdown;
-use Ciconia\Ciconia;
-use KzykHys\FrontMatter\FrontMatter;
+
+use mindplay\kisstpl\SimpleViewFinder;
+use mindplay\kisstpl\ViewService;
 use mindplay\middlemark\CebeMarkdownEngine;
 use mindplay\middlemark\CiconiaMarkdownEngine;
-use mindplay\middlemark\Document;
+
 use mindplay\middlemark\MarkdownMiddleware;
+use mindplay\middlemark\ViewRenderer;
 use mindplay\middlemark\YamlFrontMatterParser;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
@@ -18,7 +19,7 @@ test(
     function () {
         $SAMPLE = file_get_contents(__DIR__ . "/doc/test.md");
 
-        $matter = new YamlFrontMatterParser(new FrontMatter());
+        $matter = new YamlFrontMatterParser();
 
         $doc = $matter->parse($SAMPLE);
 
@@ -53,7 +54,7 @@ test(
 test(
     "Can get Document meta-data",
     function () {
-        $parser = new YamlFrontMatterParser(new FrontMatter());
+        $parser = new YamlFrontMatterParser();
 
         $default = $parser->parse("---\nboo: bar\n---\n");
 
@@ -97,6 +98,25 @@ test(
         $body = (string) $response->getBody();
 
         ok(strpos($body, "<h1>Hello</h1>") !== false, "contains rendered content");
+    }
+);
+
+test(
+    "ViewRenderer behavior",
+    function () {
+        $parser = new YamlFrontMatterParser();
+
+        $doc = $parser->parse("---\ntitle: Hello World\n---\n# Hello");
+
+        $finder = new SimpleViewFinder(__DIR__ . '/tpl', 'mindplay\\middlemark');
+        $service = new ViewService($finder);
+        $engine = new CiconiaMarkdownEngine();
+        $renderer = new ViewRenderer($service, $engine);
+
+        $html = $renderer->render($doc);
+
+        ok(strpos($html, "<h1>Hello</h1>") !== false, "contains rendered content");
+        ok(strpos($html, "<title>Hello World</title>") !== false, "contains title from meta-data");
     }
 );
 
