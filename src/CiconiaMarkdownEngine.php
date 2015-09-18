@@ -3,13 +3,14 @@
 namespace mindplay\middlemark;
 
 use Ciconia\Ciconia;
+use Ciconia\Extension\Gfm;
 
 /**
  * A Markdown parser adapter for the `kzykhys/ciconia` package
  *
  * @link https://packagist.org/packages/kzykhys/ciconia
  */
-class CiconiaMarkdown implements MarkdownInterface
+class CiconiaMarkdownEngine implements MarkdownEngineInterface
 {
     /**
      * @var Ciconia
@@ -34,9 +35,9 @@ class CiconiaMarkdown implements MarkdownInterface
     /**
      * @param Ciconia $engine
      */
-    public function __construct(Ciconia $engine)
+    public function __construct(Ciconia $engine = null)
     {
-        $this->engine = $engine;
+        $this->engine = $engine ?: $this->createDefaultEngine();
     }
 
     /**
@@ -53,5 +54,22 @@ class CiconiaMarkdown implements MarkdownInterface
         );
 
         return $this->engine->render($markdown, $options);
+    }
+
+    /**
+     * @return MarkdownEngineInterface
+     */
+    protected function createDefaultEngine()
+    {
+        $engine = new Ciconia();
+
+        $engine->addExtension(new Gfm\FencedCodeBlockExtension());
+        $engine->addExtension(new Gfm\TaskListExtension());
+        $engine->addExtension(new Gfm\InlineStyleExtension());
+        $engine->addExtension(new Gfm\WhiteSpaceExtension());
+        $engine->addExtension(new Gfm\TableExtension());
+        $engine->addExtension(new Gfm\UrlAutoLinkExtension());
+
+        return $engine;
     }
 }

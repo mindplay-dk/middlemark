@@ -2,7 +2,10 @@
 
 namespace mindplay\middlemark;
 
-interface MarkdownInterface
+/**
+ * This defines a common adapter interface for Markdown engines.
+ */
+interface MarkdownEngineInterface
 {
     /**
      * @param string $markdown

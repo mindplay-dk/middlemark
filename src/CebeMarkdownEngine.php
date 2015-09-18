@@ -2,6 +2,7 @@
 
 namespace mindplay\middlemark;
 
+use cebe\markdown\GithubMarkdown;
 use cebe\markdown\Markdown;
 
 /**
@@ -9,7 +10,7 @@ use cebe\markdown\Markdown;
  *
  * @link https://packagist.org/packages/cebe/markdown
  */
-class CebeMarkdown implements MarkdownInterface
+class CebeMarkdownEngine implements MarkdownEngineInterface
 {
     /**
      * @var Markdown
@@ -19,9 +20,9 @@ class CebeMarkdown implements MarkdownInterface
     /**
      * @param Markdown $engine
      */
-    public function __construct(Markdown $engine)
+    public function __construct(Markdown $engine = null)
     {
-        $this->engine = $engine;
+        $this->engine = $engine ?: new GithubMarkdown();
     }
 
     /**

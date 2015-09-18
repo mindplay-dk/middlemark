@@ -10,13 +10,14 @@ use Psr\Http\Message\ResponseInterface as Response;
 class MarkdownMiddleware
 {
     /**
-     * @var MarkdownInterface
+     * @var DocumentParserInterface
      */
-    private $markdown;
+    private $parser;
+
     /**
-     * @var FrontMatterInterface
+     * @var RendererInterface
      */
-    private $frontmatter;
+    private $renderer;
 
     /**
      * @var string absolute path to local document root
@@ -29,18 +30,18 @@ class MarkdownMiddleware
     public $uri_mask = "*.md";
 
     /**
-     * @param string                    $root_path   absolute path to local document root
-     * @param MarkdownInterface|null    $markdown    Markdown rendering engine
-     * @param FrontMatterInterface|null $frontmatter FrontMatter parser
+     * @param string                       $root_path absolute path to local document root
+     * @param DocumentParserInterface|null $parser    Document parser
+     * @param RendererInterface|null       $renderer  Document renderer
      */
     public function __construct(
         $root_path,
-        MarkdownInterface $markdown = null,
-        FrontMatterInterface $frontmatter = null
+        DocumentParserInterface $parser = null,
+        RendererInterface $renderer = null
     ) {
         $this->root_path = $root_path;
-        $this->markdown = $markdown ?: new CebeMarkdown(new GithubMarkdown());
-        $this->frontmatter = $frontmatter ?: new YamlFrontMatter(new FrontMatter());
+        $this->parser = $parser ?: new YamlFrontMatterParser();
+        $this->renderer = $renderer ?: new HtmlRenderer();
     }
 
     /**
@@ -52,7 +53,7 @@ class MarkdownMiddleware
     {
         $uri = $request->getUri()->getPath();
 
-        if (!fnmatch($this->uri_mask, $uri)) {
+        if (! fnmatch($this->uri_mask, $uri)) {
             return null; // URI mask doesn't match
         }
 
@@ -60,7 +61,7 @@ class MarkdownMiddleware
 
         $path = $this->root_path . preg_replace($pattern, '$1md', $uri);
 
-        if (!file_exists($path)) {
+        if (! file_exists($path)) {
             return null; // file not found
         }
 
@@ -75,13 +76,9 @@ class MarkdownMiddleware
             return $next($request, $response);
         }
 
-        $doc = $this->frontmatter->parse(file_get_contents($path));
+        $doc = $this->parser->parse(file_get_contents($path), $path);
 
-        $html = $this->markdown->render($doc->markdown);
-
-        // TODO render layout
-        // TODO build out default layout view-model
-        // http://jekyllrb.com/docs/frontmatter/
+        $html = $this->renderer->render($doc);
 
         $response->getBody()->write($html);
 
