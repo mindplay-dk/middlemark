@@ -17,11 +17,11 @@ class CebeMarkdown implements MarkdownInterface
     private $engine;
 
     /**
-     * @param Markdown $markdown
+     * @param Markdown $engine
      */
-    public function __construct(Markdown $markdown)
+    public function __construct(Markdown $engine)
     {
-        $this->engine = $markdown;
+        $this->engine = $engine;
     }
 
     /**
