@@ -5,6 +5,7 @@ namespace mindplay\middlemark;
 
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ResponseInterface;
 
 class MarkdownMiddleware
 {
@@ -29,9 +30,14 @@ class MarkdownMiddleware
     private $renderer;
 
     /**
-     * @var string URI mask for Markdown files
+     * @var string URI file extension for generated HTML documents
      */
-    public $uri_mask = "*.md";
+    public $html_ext = "html";
+
+    /**
+     * @var string file extension for Markdown documents
+     */
+    public $md_ext = "md";
 
     /**
      * @param string                       $root_path absolute path to local document root
@@ -52,21 +58,21 @@ class MarkdownMiddleware
     }
 
     /**
+     * Attempt to resolve a request for a HTML document as a path to a Markdown document.
+     *
      * @param Request $request
      *
      * @return string|null source file path (or NULL, if not found)
      */
     protected function getPath(Request $request)
     {
-        $uri = $request->getUri()->getPath();
+        $url = $request->getUri()->getPath();
 
-        if (!fnmatch($this->uri_mask, $uri)) {
-            return null; // URI mask doesn't match
+        if (!fnmatch("*.{$this->html_ext}", $url)) {
+            return null; // URL mask doesn't match
         }
 
-        $pattern = '/^(.*\.)([a-zA-Z]+)$/';
-
-        $path = $this->root_path . preg_replace($pattern, '$1md', $uri);
+        $path = $this->root_path . $this->replaceExtension($url, "html", "md");
 
         if (!file_exists($path)) {
             return null; // file not found
@@ -75,6 +81,13 @@ class MarkdownMiddleware
         return $path;
     }
 
+    /**
+     * @param Request  $request
+     * @param Response $response
+     * @param callable $next
+     *
+     * @return ResponseInterface
+     */
     public function __invoke(Request $request, Response $response, callable $next)
     {
         $path = $this->getPath($request);
@@ -86,6 +99,8 @@ class MarkdownMiddleware
         $doc = $this->parser->parse(file_get_contents($path), $path);
 
         $body = $this->engine->render($doc->getContent());
+
+        $body = $this->rewriteURLs($body);
 
         $view = $this->createView($doc, $body);
 
@@ -137,5 +152,52 @@ class MarkdownMiddleware
     protected function createDefaultRenderer()
     {
         return new HtmlRenderer();
+    }
+
+    /**
+     * Rewrite all <a> tags in the given HTML body content
+     *
+     * @param string $body HTML body content
+     *
+     * @return string
+     */
+    private function rewriteURLs($body)
+    {
+        $rewriter = new Rewriter();
+
+        return $rewriter->process(
+            $body,
+            array($this, "rewriteURL")
+        );
+    }
+
+    /**
+     * Rewrite a single URL (from e.g. "*.md" to "*.html")
+     *
+     * @param string $url
+     *
+     * @return string
+     */
+    public function rewriteURL($url)
+    {
+        if (!fnmatch("*.{$this->md_ext}", $url)) {
+            return $url; // URI mask doesn't match
+        }
+
+        return $this->replaceExtension($url, $this->md_ext, $this->html_ext);
+    }
+
+    /**
+     * Replace the file extension in a given path.
+     *
+     * @param string $path path
+     * @param string $from_ext
+     * @param string $to_ext
+     *
+     * @return string path with extension replaced
+     */
+    protected function replaceExtension($path, $from_ext, $to_ext)
+    {
+        return preg_replace("/^(.*\\.)({$from_ext})$/", '$1' . $to_ext, $path);
     }
 }

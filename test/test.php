@@ -17,13 +17,11 @@ require __DIR__ . '/header.php';
 test(
     "kzykhys/yaml-front-matter parser integration",
     function () {
-        $SAMPLE = file_get_contents(__DIR__ . "/doc/test.md");
-
         $matter = new YamlFrontMatterParser();
 
-        $doc = $matter->parse($SAMPLE);
+        $doc = $matter->parse("---\ntitle: Hello World\n---\n# Hello");
 
-        eq(trim($doc->getContent()), "# Hello", "can get Markdown content");
+        eq($doc->getContent(), "# Hello", "can get Markdown content");
 
         eq($doc->getDataMap(), array("title" => "Hello World"), "can parse front matter");
     }
@@ -107,7 +105,7 @@ test(
     function () {
         $middleware = new MarkdownMiddleware(__DIR__ . "/doc");
 
-        $request = new Request("/test.md", "GET");
+        $request = new Request("/test.html", "GET");
 
         /** @var Response $response */
         $response = new Response();
@@ -119,6 +117,7 @@ test(
         $body = (string) $response->getBody();
 
         ok(strpos($body, "<h1>Hello</h1>") !== false, "contains rendered content");
+        ok(strpos($body, "<a href=\"foo.html\">Foo</a>") !== false, "contains rewritten URL");
     }
 );
 
@@ -133,7 +132,7 @@ test(
         $engine = new CebeMarkdownEngine();
 
         $view = new View();
-        $view->doc = $parser->parse("---\ntitle: Hello World\n---\n# Hello");
+        $view->doc = $parser->parse("---\ntitle: Hello World\n---\n# Hello\n[Foo](/foo.md)");
         $view->body = $engine->render($view->doc->getContent());
         $view->title = $view->doc->getTitle();
 
