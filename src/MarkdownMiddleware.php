@@ -53,7 +53,7 @@ class MarkdownMiddleware
     ) {
         $this->root_path = $root_path;
         $this->parser = $parser ?: $this->createDefaultParser();
-        $this->engine = $renderer ?: $this->createDefaultEngine();
+        $this->engine = $engine ?: $this->createDefaultEngine();
         $this->renderer = $renderer ?: $this->createDefaultRenderer();
     }
 
