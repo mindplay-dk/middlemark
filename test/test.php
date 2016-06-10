@@ -103,9 +103,9 @@ test(
 test(
     "middleware can render documents",
     function () {
-        $middleware = new MarkdownMiddleware(__DIR__ . "/doc");
+        $middleware = new MarkdownMiddleware(__DIR__ . "/doc", "/docs");
 
-        $request = new Request("/test.html", "GET");
+        $request = new Request("/docs/test.html", "GET");
 
         /** @var Response $response */
         $response = new Response();
@@ -117,7 +117,7 @@ test(
         $body = (string) $response->getBody();
 
         ok(strpos($body, "<h1>Hello</h1>") !== false, "contains rendered content");
-        ok(strpos($body, "<a href=\"foo.html\">Foo</a>") !== false, "contains rewritten URL");
+        ok(strpos($body, "<a href=\"/docs/foo.html\">Foo</a>") !== false, "contains rewritten URL", $body);
     }
 );
 

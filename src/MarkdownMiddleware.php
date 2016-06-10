@@ -4,8 +4,8 @@ namespace mindplay\middlemark;
 
 
 use Psr\Http\Message\RequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface as Response;
 
 class MarkdownMiddleware
 {
@@ -13,6 +13,11 @@ class MarkdownMiddleware
      * @var string absolute path to local document root
      */
     private $root_path;
+
+    /**
+     * @var string absolute root URI for which this middleware responds
+     */
+    private $base_uri;
 
     /**
      * @var DocumentParserInterface
@@ -41,17 +46,20 @@ class MarkdownMiddleware
 
     /**
      * @param string                       $root_path absolute path to local document root
+     * @param string                       $base_uri  base URI for which this middleware responds
      * @param DocumentParserInterface|null $parser    Document parser
      * @param MarkdownEngineInterface|null $engine    Markdown engine
      * @param RendererInterface|null       $renderer  Document renderer
      */
     public function __construct(
         $root_path,
+        $base_uri = '/',
         DocumentParserInterface $parser = null,
         MarkdownEngineInterface $engine = null,
         RendererInterface $renderer = null
     ) {
         $this->root_path = $root_path;
+        $this->base_uri = rtrim($base_uri, '/') . '/';
         $this->parser = $parser ?: $this->createDefaultParser();
         $this->engine = $engine ?: $this->createDefaultEngine();
         $this->renderer = $renderer ?: $this->createDefaultRenderer();
@@ -72,7 +80,11 @@ class MarkdownMiddleware
             return null; // URL mask doesn't match
         }
 
-        $path = $this->root_path . $this->replaceExtension($url, $this->html_ext, $this->md_ext);
+        if (strncmp($url, $this->base_uri, strlen($this->base_uri)) !== 0) {
+            return null; // URL base path doesn't match
+        }
+
+        $path = $this->root_path . "/" . $this->replaceExtension(substr($url, strlen($this->base_uri)), $this->html_ext, $this->md_ext);
 
         if (!file_exists($path)) {
             return null; // file not found
@@ -184,7 +196,7 @@ class MarkdownMiddleware
             return $url; // URI mask doesn't match
         }
 
-        return $this->replaceExtension($url, $this->md_ext, $this->html_ext);
+        return $this->base_uri . $this->replaceExtension($url, $this->md_ext, $this->html_ext);
     }
 
     /**
