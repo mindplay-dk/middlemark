@@ -196,7 +196,11 @@ class MarkdownMiddleware
             return $url; // URI mask doesn't match
         }
 
-        return $this->base_uri . $this->replaceExtension($url, $this->md_ext, $this->html_ext);
+        $path = $this->replaceExtension($url, $this->md_ext, $this->html_ext);
+
+        return substr($path, 1) === "/"
+            ? $this->base_uri . $path // append base URI to absolute path
+            : $path; // preserve relative path
     }
 
     /**

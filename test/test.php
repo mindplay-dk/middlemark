@@ -117,7 +117,9 @@ test(
         $body = (string) $response->getBody();
 
         ok(strpos($body, "<h1>Hello</h1>") !== false, "contains rendered content");
-        ok(strpos($body, "<a href=\"/docs/foo.html\">Foo</a>") !== false, "contains rewritten URL", $body);
+        ok(strpos($body, "<a href=\"foo.html\">Foo</a>") !== false, "contains rewritten relative URL", $body);
+        ok(strpos($body, "<a href=\"/bar.html\">Bar</a>") !== false, "contains rewritten absolute URL", $body);
+        ok(strpos($body, "<a href=\"http://google.com/\">Baz</a>") !== false, "contains rewritten fully-qualifed URL", $body);
     }
 );
 
