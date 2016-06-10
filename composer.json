@@ -15,17 +15,16 @@
     "require-dev": {
         "mindplay/testies": "dev-master",
         "zendframework/zend-diactoros": "^1.1",
-        "relay/relay": "1.*@dev",
         "cebe/markdown": "^1.1",
         "kzykhys/yaml-front-matter": "^1.0",
         "kzykhys/ciconia": "^1.0.3",
         "mindplay/kisstpl": "^1.2.3"
     },
     "suggest": {
-        "cebe/markdown": "An officially supported Markdown renderer",
-        "kzykhys/ciconia": "An officially supported Markdown renderer",
-        "kzykhys/yaml-front-matter": "The officially supported Front Matter parser",
-        "mindplay/kisstpl" : "The officially support template engine"
+        "cebe/markdown": "Markdown renderer, supported by CebeMarkdownEngine",
+        "kzykhys/ciconia": "Markdown renderer, supported by CiconiaMarkdownEngine",
+        "kzykhys/yaml-front-matter": "Front Matter parser, supported by YamlFrontMatterParser",
+        "mindplay/kisstpl" : "Template engine, supported by ViewRenderer"
     },
     "autoload": {
         "psr-4": {
