@@ -72,7 +72,7 @@ class MarkdownMiddleware
             return null; // URL mask doesn't match
         }
 
-        $path = $this->root_path . $this->replaceExtension($url, "html", "md");
+        $path = $this->root_path . $this->replaceExtension($url, $this->html_ext, $this->md_ext);
 
         if (!file_exists($path)) {
             return null; // file not found
