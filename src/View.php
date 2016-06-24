@@ -15,11 +15,6 @@ class View
     public $doc;
 
     /**
-     * @var string page title (in plain text)
-     */
-    public $title;
-
-    /**
      * @var string rendered Markdown content as HTML
      */
     public $body;

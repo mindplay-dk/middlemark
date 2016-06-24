@@ -134,9 +134,9 @@ test(
         $engine = new CebeMarkdownEngine();
 
         $view = new View();
+
         $view->doc = $parser->parse("---\ntitle: Hello World\n---\n# Hello\n[Foo](/foo.md)");
         $view->body = $engine->render($view->doc->getContent());
-        $view->title = $view->doc->getTitle();
 
         $html = $renderer->render($view);
 

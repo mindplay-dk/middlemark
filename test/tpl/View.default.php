@@ -11,7 +11,7 @@ use mindplay\middlemark\View;
 <html>
 
 <head>
-    <title><?= htmlspecialchars($view->title) ?></title>
+    <title><?= htmlspecialchars($view->doc->getTitle() ?: "No Title") ?></title>
 </head>
 
 <body>

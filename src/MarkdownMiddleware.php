@@ -137,7 +137,6 @@ class MarkdownMiddleware
 
         $view->doc = $doc;
         $view->body = $body;
-        $view->title = $doc->getTitle() ?: "No Title";
 
         return $view;
     }

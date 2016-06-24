@@ -11,7 +11,8 @@ class HtmlRenderer implements RendererInterface
 {
     public function render(View $view)
     {
-        $title = htmlspecialchars($view->title);
+        $title = htmlspecialchars($view->doc->getTitle() ?: "No Title");
+
         $body = $view->body;
 
         return "<!DOCTYPE html><html><head><title>{$title}</title></head><body>{$body}</body></html>";

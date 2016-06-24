@@ -37,5 +37,6 @@ easy to replace.
 
 ### Renderer Adapter
 
-The default engine for rendering the view-model is [mindplay/kisstpl], and this is currently the only
-rederer supported - to use a different view engine, implement the [Renderer](src/RendererInterface).
+The default engine for rendering the view-model is [mindplay/kisstpl](https://github.com/mindplay-dk/kisstpl),
+and this is currently the only renderer supported - to use any different view engine, implement the
+[Renderer](src/RendererInterface).
